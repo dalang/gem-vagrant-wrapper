@@ -102,7 +102,11 @@ class VagrantWrapper
   def env_paths
     path = ENV['PATH'].to_s.strip
     return [] if path.empty?
+    if ENV['OS'] == 'Windows_NT'
+    path.split(';')
+    else
     path.split(':')
+    end
   end
 
   def self.install_instructions
@@ -129,8 +133,13 @@ class VagrantWrapper
   def find_vagrant
     unless @vagrant_path
       @search_paths.each do |path|
+        if ENV['OS'] == 'Windows_NT'
+        test_bin = "#{path}\\#{@vagrant_name}"
+        next unless ::File.exists?(test_bin) and test_bin.include?('HashiCorp')
+	else
         test_bin = "#{path}/#{@vagrant_name}"
         next unless ::File.executable?(test_bin)
+	end
         next if (%x{tail -n1 #{test_bin}}.match(@wrapper_mark) != nil)
         @vagrant_path = test_bin
         break
