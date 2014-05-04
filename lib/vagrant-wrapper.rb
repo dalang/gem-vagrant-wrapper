@@ -69,12 +69,12 @@ class VagrantWrapper
       send("exec_vagrant", *args)
     end
   end
-  
+
   # Return the filesystem location of the discovered Vagrant install.
   def vagrant_location
     find_vagrant
   end
-  
+
   # Return the version of the discovered Vagrant install.
   def vagrant_version
     ver = call_vagrant "-v"
@@ -103,9 +103,9 @@ class VagrantWrapper
     path = ENV['PATH'].to_s.strip
     return [] if path.empty?
     if ENV['OS'] == 'Windows_NT'
-    path.split(';')
+      path.split(';')
     else
-    path.split(':')
+      path.split(':')
     end
   end
 
@@ -134,12 +134,12 @@ class VagrantWrapper
     unless @vagrant_path
       @search_paths.each do |path|
         if ENV['OS'] == 'Windows_NT'
-        test_bin = "#{path}\\#{@vagrant_name}"
-        next unless ::File.exists?(test_bin) and test_bin.include?('HashiCorp')
-	else
-        test_bin = "#{path}/#{@vagrant_name}"
-        next unless ::File.executable?(test_bin)
-	end
+          test_bin = "#{path}\\#{@vagrant_name}"
+          next unless ::File.exists?(test_bin) and test_bin.include?('HashiCorp')
+        else
+          test_bin = "#{path}/#{@vagrant_name}"
+          next unless ::File.executable?(test_bin)
+        end
         next if (%x{tail -n1 #{test_bin}}.match(@wrapper_mark) != nil)
         @vagrant_path = test_bin
         break
